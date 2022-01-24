@@ -8,7 +8,7 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send('hello');
 });
 
 app.get('/urls.json', (req, res) => {
