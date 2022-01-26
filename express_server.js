@@ -57,8 +57,15 @@ app.get('/urls.json', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false };
-  res.render('login', templateVars);
+  if (Object.keys(req.query).length === 0) {
+    const templateVars = { user: users[req.cookies['user_id']], alert: false };
+    return res.render('login', templateVars);
+  }
+
+  // handle redirect
+  const templateVars = req.query;
+  templateVars.user = users[req.cookies['user_id']];
+  res.status(403).render('login', templateVars);
 });
 
 
@@ -68,15 +75,14 @@ app.post('/login', (req, res) => {
   const id = lookupUser(email);
 
   // handle email not in database
-  // might have to remove emptyemail if it is not used
   if (!id) {
-    return res.status(403).render('login', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: false });
+    return res.redirect('/login/?alert=nonexistentEmail');
   }
 
   // handle wrong password and empty password
   // maybe change emptypassword to wrongpassword idk
   if (password !== users[id].password) {
-    return res.status(403).render('login', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: true });
+    return res.redirect('/login/?alert=wrongPassword');
   }
 
   // set cookie and redirect to url page
@@ -142,13 +148,29 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/:${shortURL}`);
+  res.redirect(`/urls/:${shortURL}`); // fix this
 });
 
 
 app.get('/urls/new', (req, res) => {
+  // check if user logged in
+  // redirect to login page if not logged in
+  if (!req.cookies.user_id) {
+    return res.redirect('/login/?alert=notLoggedIn');
+  res.render('urls_new');
+  }
+
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('urls_new', templateVars);
+});
+
+
+app.get('/login/:query', (req, res) => {
+// app.get('/login/:existingEmail/:wrongPassword/:alert', (req, res) => {
+  // const templateVars = { user: users[req.cookies['user_id']], existingEmail: req.params.existingEmail, wrongPassword: req.params.wrongPassword, alert: req.params.alert }
+  // res.render('login', templateVars);
+  console.log(req.params);
+  console.log(req.query);
 });
 
 
