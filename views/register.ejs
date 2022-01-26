@@ -19,10 +19,19 @@
         <div class="form-group">
           <label for="email">Email address</label>
           <input class="form-control" type="email" name="email" placeholder="Enter email" style="width: 300px">
+          <% if (emptyEmail) { %>
+            <small class="form-text text-muted">Please enter an email</small>
+          <% } %>
+          <% if (existingEmail) { %>
+            <small class="form-text text-muted">Email already registered</small>
+          <% } %>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
           <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px">
+          <% if (emptyPassword) { %>
+            <small class="form-text text-muted">Please enter a password</small>
+          <% } %>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

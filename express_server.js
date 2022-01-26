@@ -30,6 +30,15 @@ const generateRandomString = () => {
   return out;
 };
 
+const findEmail = newEmail => {
+  for (let user in users) {
+    if (users[user].email === newEmail) {
+      return true;
+    }
+  }
+  return false;
+};
+
 app.get("/", (req, res) => {
   res.send('hello');
 });
@@ -50,7 +59,7 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']] };
+  const templateVars = { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: false };
   res.render('register', templateVars);
 });
 
@@ -58,6 +67,26 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
+
+  // handle existing email
+  if (findEmail(email)) {
+    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false });
+  }
+
+  // handle empty email and password
+  if (!email && !password) {
+    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: true, emptyPassword: true });
+  }
+
+  // handle empty email
+  if (!email) {
+    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: true, emptyPassword: false });
+  }
+
+  // handle empty password
+  if (!password) {
+    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: true });
+  }
 
   // add user to users object
   users[id] = { id, email, password }
