@@ -31,10 +31,11 @@ const generateRandomString = () => {
 };
 
 // search for a user given a key and value
-const lookupUser = (key, val) => {
+// returns the user id if user found, else false
+const lookupUser = newEmail => {
   for (let user in users) {
-    if (users[user][key] === val) {
-      return true;
+    if (users[user].email === newEmail) {
+      return users[user].id;
     }
   }
   return false;
@@ -60,7 +61,11 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
 
+  // handle email not in database
+  // if (!lookupUser('email'))
 });
 
 app.post('/logout', (req, res) => {
@@ -79,7 +84,7 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
 
   // handle existing email
-  if (lookupUser('email', email)) {
+  if (lookupUser(email)) {
     return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false });
   }
 
