@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');    // make post request data readable
 const cookieParser = require('cookie-parser');
+const _ = require('lodash');
 
 app.set('view engine', 'ejs');    // use ejs as templating engine
 app.use(bodyParser.urlencoded({extended: true}));
@@ -15,7 +16,7 @@ const urlDatabase = {    // keep track of urls and shortened form
 
 const users = {
   'exampleUserID': {
-    id: 'exampleUserId',
+    id: 'exampleUserID',
     email: 'user@example.com',
     password: 'poop'
   }
@@ -32,14 +33,20 @@ const generateRandomString = () => {
 
 // search for a user given a key and value
 // returns the user id if user found, else false
-const lookupUser = newEmail => {
+const lookupUser = inputEmail => {
   for (let user in users) {
-    if (users[user].email === newEmail) {
+    if (users[user].email === inputEmail) {
       return users[user].id;
     }
   }
   return false;
 };
+
+// check for correct password
+// returns true if valid password, else false
+// const validatePassword = inputPassword => {
+//
+// };
 
 app.get("/", (req, res) => {
   res.send('hello');
@@ -63,9 +70,23 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const id = lookupUser(email);
 
   // handle email not in database
-  // if (!lookupUser('email'))
+  // might have to remove emptyemail if it is not used
+  if (!id) {
+    return res.status(403).render('login', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: false });
+  }
+
+  // handle wrong password and empty password
+  // maybe change emptypassword to wrongpassword idk
+  if (password !== users[id].password) {
+    return res.status(403).render('login', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: true });
+  }
+
+  // set cookie and redirect to url page
+  res.cookie('user_id', id);
+  res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
