@@ -9,7 +9,8 @@ app.set('view engine', 'ejs');    // use ejs as templating engine
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-const urlDatabase = {    // keep track of urls and shortened form
+// keep track of urls and shortened form
+const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'ttp://www.google.com'
 };
@@ -98,8 +99,15 @@ app.post('/logout', (req, res) => {
 
 
 app.get('/register', (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: false };
-  res.render('register', templateVars);
+  if (Object.keys(req.query).length === 0) {
+    const templateVars = { user: users[req.cookies['user_id']], alert: false };
+    return res.render('register', templateVars);
+  }
+
+  // handle redirect
+  const templateVars = req.query;
+  templateVars.user = users[req.cookies['user_id']];
+  res.status(400).render('register', templateVars);
 });
 
 
@@ -110,22 +118,22 @@ app.post('/register', (req, res) => {
 
   // handle existing email
   if (lookupUser(email)) {
-    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false });
+    return res.redirect('/register/?alert=existingEmail');
   }
 
   // handle empty email and password
   if (!email && !password) {
-    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: true, emptyPassword: true });
+    return res.redirect('/register/?alert=empty');
   }
 
   // handle empty email
   if (!email) {
-    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: true, emptyPassword: false });
+    return res.redirect('/register/?alert=emptyEmail');
   }
 
   // handle empty password
   if (!password) {
-    return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: false, emptyEmail: false, emptyPassword: true });
+    return res.redirect('/register/?alert=emptyPassword');
   }
 
   // add user to users object
@@ -162,15 +170,6 @@ app.get('/urls/new', (req, res) => {
 
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('urls_new', templateVars);
-});
-
-
-app.get('/login/:query', (req, res) => {
-// app.get('/login/:existingEmail/:wrongPassword/:alert', (req, res) => {
-  // const templateVars = { user: users[req.cookies['user_id']], existingEmail: req.params.existingEmail, wrongPassword: req.params.wrongPassword, alert: req.params.alert }
-  // res.render('login', templateVars);
-  console.log(req.params);
-  console.log(req.query);
 });
 
 
