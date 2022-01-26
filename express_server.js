@@ -9,10 +9,11 @@ app.set('view engine', 'ejs');    // use ejs as templating engine
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+
 // keep track of urls and shortened form
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'ttp://www.google.com'
+  '9sm5xK': 'http://www.google.com'
 };
 
 
@@ -152,33 +153,43 @@ app.get('/urls', (req, res) => {
 });
 
 
+// create new url
 app.post('/urls', (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/:${shortURL}`); // fix this
-});
-
-
-app.get('/urls/new', (req, res) => {
   // check if user logged in
   // redirect to login page if not logged in
   if (!req.cookies.user_id) {
     return res.redirect('/login/?alert=notLoggedIn');
-  res.render('urls_new');
   }
 
+  const shortURL = generateRandomString();
+  let longURL = req.body.longURL;
+
+  // check if longURL contains https
+  if (!longURL.includes('https:\//', 0)) {
+    longURL = 'https:\//' + longURL;
+  }
+
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`); // fix this
+});
+
+
+// render urls_new page
+app.get('/urls/new', (req, res) => {
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('urls_new', templateVars);
 });
 
 
+// render urls_show page
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL.slice(1), longURL: urlDatabase[req.params.shortURL.slice(1)], user: users[req.cookies['user_id']] };
+  const shortURL = req.params.shortURL;
+  const templateVars = { shortURL: shortURL, longURL: urlDatabase[shortURL], user: users[req.cookies['user_id']] };
   res.render('urls_show', templateVars);
 });
 
 
+// redirect to longURL
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
@@ -195,13 +206,26 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 // edit existing long url
 app.post('/urls/:id', (req, res) => {
+  // check if user logged in
+  // redirect to login page if not logged in
+  if (!req.cookies.user_id) {
+    return res.redirect('/login/?alert=notLoggedIn');
+  }
+
   // update url database
   const id = req.params.id;
-  const newLongURL = req.body.newLongURL;
+  let newLongURL = req.body.newLongURL;
+
+  // check if newlongURL contains https
+  if (!newLongURL.includes('https:\//', 0)) {
+    newLongURL = 'https:\//' + newLongURL;
+  }
+
+  // update database
   urlDatabase[id] = newLongURL;
 
   // redirect to urls_show template
-  res.redirect(`/urls/:${id}`);
+  res.redirect(`/urls/${id}`);
 });
 
 

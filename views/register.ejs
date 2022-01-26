@@ -12,6 +12,19 @@
 
   <body>
     <%- include('partials/_header') %>
+    <% if (alert) { %>
+      <div class="alert alert-danger" role="alert">
+        <% if (alert === 'existingEmail') { %>
+          Email already registered
+        <% } else if (alert === 'empty') { %>
+          Please enter an email and password
+        <% } else if (alert === 'emptyEmail') { %>
+          Please enter an email
+        <% } else { %>
+          Please enter a password
+        <% } %>
+      </div>
+    <% } %>
 
     <main style="margin: 1em;">
       <h3>Register</h3>
@@ -19,19 +32,10 @@
         <div class="form-group">
           <label for="email">Email address</label>
           <input class="form-control" type="email" name="email" placeholder="Enter email" style="width: 300px">
-          <% if (emptyEmail) { %>
-            <small class="form-text text-muted">Please enter an email</small>
-          <% } %>
-          <% if (existingEmail) { %>
-            <small class="form-text text-muted">Email already registered</small>
-          <% } %>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
           <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px">
-          <% if (emptyPassword) { %>
-            <small class="form-text text-muted">Please enter a password</small>
-          <% } %>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
