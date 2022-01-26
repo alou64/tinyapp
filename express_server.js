@@ -30,9 +30,10 @@ const generateRandomString = () => {
   return out;
 };
 
-const findEmail = newEmail => {
+// search for a user given a key and value
+const lookupUser = (key, val) => {
   for (let user in users) {
-    if (users[user].email === newEmail) {
+    if (users[user][key] === val) {
       return true;
     }
   }
@@ -58,6 +59,10 @@ app.get('/login', (req, res) => {
   res.render('login', templateVars);
 });
 
+app.post('/login', (req, res) => {
+
+});
+
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/urls');
@@ -74,7 +79,7 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
 
   // handle existing email
-  if (findEmail(email)) {
+  if (lookupUser('email', email)) {
     return res.status(400).render('register', { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false });
   }
 
