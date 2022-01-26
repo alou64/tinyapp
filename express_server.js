@@ -47,10 +47,15 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-app.post('/login', (req, res) => {
-  const user_id = req.body.user_id;
-  res.cookie('user_id', user_id);
-  res.redirect('/urls');
+// app.post('/login', (req, res) => {
+//   const user_id = req.body.user_id;
+//   res.cookie('user_id', user_id);
+//   res.redirect('/urls');
+// });
+
+app.get('/login', (req, res) => {
+  const templateVars = { user: users[req.cookies['user_id']], existingEmail: true, emptyEmail: false, emptyPassword: false };
+  res.render('login', templateVars);
 });
 
 app.post('/logout', (req, res) => {
@@ -91,7 +96,7 @@ app.post('/register', (req, res) => {
   // add user to users object
   users[id] = { id, email, password }
 
-  // set cookie
+  // set cookie and redirect to url page
   res.cookie('user_id', id);
   res.redirect('/urls');
 });
