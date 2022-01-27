@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { urlDatabase, users } = require('../constants/data');
-const { generateRandomString, lookupUser, urlsForUser } = require('../constants/helperFunctions');
+const { generateRandomString, getUserByEmail } = require('../constants/helperFunctions');
 const bcrypt = require('bcryptjs');
 
 
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
   const password = bcrypt.hashSync(req.body.password, 10);
 
   // handle existing email
-  if (lookupUser(email)) {
+  if (getUserByEmail(email, users)) {
     return res.redirect('/register/?alert=existingEmail');
   }
 

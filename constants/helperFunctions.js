@@ -1,6 +1,3 @@
-const { urlDatabase, users } = require('./data');
-
-
 // generate random ID to be used for tinyURL and userID
 const generateRandomString = () => {
   const vals = 'ABCDEFGHIJKLMNOabcdefghijklmnopqrstuvwxyzPQRSTUVWXYZ0123456789';
@@ -12,12 +9,11 @@ const generateRandomString = () => {
 };
 
 
-// search for a user given a key and value
 // returns the user id if user found, else false
-const lookupUser = inputEmail => {
-  for (let user in users) {
-    if (users[user].email === inputEmail) {
-      return users[user].id;
+const getUserByEmail = (email, database) => {
+  for (let user in database) {
+    if (database[user].email === email) {
+      return database[user].id;
     }
   }
   return false;
@@ -25,11 +21,11 @@ const lookupUser = inputEmail => {
 
 
 // returns URLS belonging to a given user
-const urlsForUser = id => {
+const urlsForUser = (id, database) => {
   let urls = {};
-  for (let url in urlDatabase) {
-    if (urlDatabase[url].userID === id) {
-      urls[url] = urlDatabase[url].longURL;
+  for (let url in database) {
+    if (database[url].userID === id) {
+      urls[url] = database[url].longURL;
     }
   }
   return urls;
@@ -38,6 +34,6 @@ const urlsForUser = id => {
 
 module.exports = {
   generateRandomString,
-  lookupUser,
+  getUserByEmail,
   urlsForUser
 };

@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = getUserByEmail(email, urlDatabase);
+  const id = getUserByEmail(email, users);
 
   // handle email not in database
   if (!id) {
