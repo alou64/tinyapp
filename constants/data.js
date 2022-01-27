@@ -19,7 +19,7 @@ const users = {
   'exampleUserID': {
     id: 'exampleUserID',
     email: 'user@example.com',
-    password: bcrypt.hashSync('poop', 10)
+    password: bcrypt.hashSync('123', 10)
   }
 };
 
