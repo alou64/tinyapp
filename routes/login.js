@@ -1,20 +1,21 @@
 const router = require('express').Router();
-const { urlDatabase, users } = require('../constants/data');
-const { generateRandomString, lookupUser, urlsForUser } = require('../constants/helperFunctions');
+const { users, urlDatabase } = require('../constants/data');
+const { getUserByEmail } = require('../constants/helperFunctions');
+const bcrypt = require('bcryptjs');
 
 
 // render login page
 router.get('/', (req, res) => {
-  console.log(req.cookies);
+  const user = users[req.session.user_id];
+
   if (Object.keys(req.query).length === 0) {
-    const templateVars = { user: users[req.cookies['user_id']], alert: false };
+    const templateVars = { user, alert: false };
     return res.render('login', templateVars);
   }
 
   // handle redirect
   const alert = req.query.alert;
-  const templateVars = { alert, user: users[req.cookies['user_id']] };
-  // templateVars.user = users[req.cookies['user_id']];
+  const templateVars = { alert, user };
   res.status(403).render('login', templateVars);
 });
 
@@ -23,7 +24,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = lookupUser(email);
+  const id = getUserByEmail(email, urlDatabase);
 
   // handle email not in database
   if (!id) {
@@ -32,12 +33,12 @@ router.post('/', (req, res) => {
 
   // handle wrong password and empty password
   // maybe change emptypassword to wrongpassword idk
-  if (password !== users[id].password) {
+  if (!bcrypt.compareSync(password, users[id].password)) {
     return res.redirect('/login/?alert=wrongPassword');
   }
 
   // set cookie and redirect to url page
-  res.cookie('user_id', id);
+  req.session.user_id = id;
   res.redirect('/urls');
 });
 

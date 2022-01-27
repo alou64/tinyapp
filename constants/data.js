@@ -1,3 +1,6 @@
+const bcrypt = require('bcryptjs');
+
+
 // keep track of urls and shortened form
 const urlDatabase = {
   'b2xVn2': {
@@ -16,7 +19,7 @@ const users = {
   'exampleUserID': {
     id: 'exampleUserID',
     email: 'user@example.com',
-    password: 'poop'
+    password: bcrypt.hashSync('poop', 10)
   }
 };
 

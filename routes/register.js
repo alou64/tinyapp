@@ -1,18 +1,21 @@
 const router = require('express').Router();
 const { urlDatabase, users } = require('../constants/data');
 const { generateRandomString, lookupUser, urlsForUser } = require('../constants/helperFunctions');
+const bcrypt = require('bcryptjs');
 
 
 // render register page
 router.get('/', (req, res) => {
+  const user = users[req.session.user_id];
+
   if (Object.keys(req.query).length === 0) {
-    const templateVars = { user: users[req.cookies['user_id']], alert: false };
+    const templateVars = { user, alert: false };
     return res.render('register', templateVars);
   }
 
   // handle redirect
   const alert = req.query.alert;
-  const templateVars = { alert, user: users[req.cookies['user_id']] };
+  const templateVars = { user, alert };
   res.status(400).render('register', templateVars);
 });
 
@@ -21,7 +24,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
-  const password = req.body.password;
+  const password = bcrypt.hashSync(req.body.password, 10);
 
   // handle existing email
   if (lookupUser(email)) {
@@ -39,7 +42,7 @@ router.post('/', (req, res) => {
   }
 
   // handle empty password
-  if (!password) {
+  if (!req.body.password) {
     return res.redirect('/register/?alert=emptyPassword');
   }
 
@@ -47,7 +50,7 @@ router.post('/', (req, res) => {
   users[id] = { id, email, password }
 
   // set cookie and redirect to url page
-  res.cookie('user_id', id);
+  req.session.user_id = id;
   res.redirect('/urls');
 });
 
