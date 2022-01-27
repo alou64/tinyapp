@@ -56,6 +56,18 @@ const lookupUser = inputEmail => {
 };
 
 
+// returns URLS belonging to a given user
+const urlsForUser = id => {
+  let urls = {};
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].userID === id) {
+      urls[url] = urlDatabase[url].longURL;
+    }
+  }
+  return urls;
+};
+
+
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
@@ -156,8 +168,16 @@ app.post('/register', (req, res) => {
 
 // render urls_index page
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
-  console.log(req.cookies);
+  // check if user logged in
+  // redirect to login page if not logged in
+  if (!req.cookies.user_id) {
+    return res.redirect('/login/?alert=notLoggedIn');
+  }
+
+  const user = req.cookies['user_id'];
+  const urls = urlsForUser(user);
+
+  const templateVars = { urls, user: users[user] };
   res.render('urls_index', templateVars)
 });
 
@@ -202,7 +222,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
 // redirect to longURL
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
