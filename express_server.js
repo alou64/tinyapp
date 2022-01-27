@@ -1,18 +1,19 @@
 const express = require('express');
-const bodyParser = require('body-parser');    // make post request data readable
+const bodyParser = require('body-parser');    
 const cookieSession = require('cookie-session');
 
 
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
 
-app.set('view engine', 'ejs');    // use ejs as templating engine
+app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ['poo']
 }));
+
 
 const login = require('./routes/login');
 const logout = require('./routes/logout');
