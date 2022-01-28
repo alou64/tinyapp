@@ -39,7 +39,7 @@ describe('getUserByEmail', () => {
 
 describe('getUserByEmail', () => {
   it('should return false when passed an email not in the database', () => {
-    const user = getUserByEmail("user5@example.com", testUsers)
+    const user = getUserByEmail("user5@example.com", testUsers);
     assert.isFalse(user);
   });
 });
