@@ -11,7 +11,11 @@
   <div class="card text-center">
       <% if (alert) { %>
         <div class="alert alert-danger" role="alert" style="margin: 0">
-          You can only edit URLs you own
+          <% if (alert === 'notOwner') { %>
+            You can only edit URLs you own
+          <% } else { %>
+            Please enter a URL
+          <% } %>
         </div>
         <% } %>
         <div class="card-header"></div>

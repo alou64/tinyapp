@@ -117,6 +117,11 @@ router.post('/:id', (req, res) => {
     return res.redirect(`/urls/${id}/?shortURL=${id}&alert=notOwner`);
   }
 
+  // check for empty field
+  if (!newLongURL) {
+    return res.redirect(`/urls/${id}/?shortURL=${id}&alert=empty`);
+  }
+
   // check if newlongURL contains http
   if (!newLongURL.includes('http://', 0)) {
     newLongURL = 'https://' + newLongURL;
