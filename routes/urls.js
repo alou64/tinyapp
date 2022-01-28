@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
   const urls = urlsForUser(user, urlDatabase);
 
   const templateVars = { urls, user: users[user] };
-  res.render('urls_index', templateVars)
+  res.render('urls_index', templateVars);
 });
 
 
@@ -38,8 +38,8 @@ router.post('/', (req, res) => {
   }
 
   // check if longURL contains http
-  if (!longURL.includes('http:\//', 0)) {
-    longURL = 'https:\//' + longURL;
+  if (!longURL.includes('http://', 0)) {
+    longURL = 'https://' + longURL;
   }
 
   // Update database and redirect to urls_show page
@@ -118,8 +118,8 @@ router.post('/:id', (req, res) => {
   }
 
   // check if newlongURL contains http
-  if (!newLongURL.includes('http:\//', 0)) {
-    newLongURL = 'https:\//' + newLongURL;
+  if (!newLongURL.includes('http://', 0)) {
+    newLongURL = 'https://' + newLongURL;
   }
 
   // update database
