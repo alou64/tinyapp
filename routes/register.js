@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { urlDatabase, users } = require('../constants/database');
+const { users } = require('../constants/database');
 const { generateRandomString, getUserByEmail } = require('../constants/helperFunctions');
 const bcrypt = require('bcryptjs');
 
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
   }
 
   // add user to users object
-  users[id] = { id, email, password }
+  users[id] = { id, email, password };
 
   // set cookie and redirect to url page
   req.session.user_id = id;
