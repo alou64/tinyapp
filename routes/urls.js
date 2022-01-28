@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { urlDatabase, users } = require('../constants/data');
+const { urlDatabase, users } = require('../constants/database');
 const { generateRandomString, urlsForUser } = require('../constants/helperFunctions');
 
 

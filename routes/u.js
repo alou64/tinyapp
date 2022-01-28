@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { urlDatabase } = require('../constants/data');
+const { urlDatabase } = require('../constants/database');
 
 
 // redirect to longURL

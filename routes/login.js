@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { users, urlDatabase } = require('../constants/data');
+const { users, urlDatabase } = require('../constants/database');
 const { getUserByEmail } = require('../constants/helperFunctions');
 const bcrypt = require('bcryptjs');
 

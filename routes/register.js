@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { urlDatabase, users } = require('../constants/data');
+const { urlDatabase, users } = require('../constants/database');
 const { generateRandomString, getUserByEmail } = require('../constants/helperFunctions');
 const bcrypt = require('bcryptjs');
 
@@ -29,11 +29,6 @@ router.post('/', (req, res) => {
   // handle existing email
   if (getUserByEmail(email, users)) {
     return res.redirect('/register/?alert=existingEmail');
-  }
-
-  // handle empty email and password
-  if (!email && !password) {
-    return res.redirect('/register/?alert=empty');
   }
 
   // handle empty email
