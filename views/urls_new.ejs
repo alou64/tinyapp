@@ -12,7 +12,11 @@
 
   <body>
     <%- include('partials/_header') %>
-
+    <% if (alert) { %>
+      <div class="alert alert-danger" role="alert" style="margin: 0">
+        Please enter a URL
+      </div>
+      <% } %>
     <main style="margin: 1em;">
       <h3>Create TinyURL</h3>
       <form class="form-inline" action="/urls" method="POST">
