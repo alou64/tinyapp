@@ -32,7 +32,6 @@ router.post('/', (req, res) => {
   }
 
   // handle wrong password and empty password
-  // maybe change emptypassword to wrongpassword idk
   if (!bcrypt.compareSync(password, users[id].password)) {
     return res.redirect('/login/?alert=wrongPassword');
   }
