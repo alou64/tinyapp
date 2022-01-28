@@ -31,7 +31,7 @@ router.post('/', (req, res) => {
   let longURL = req.body.longURL;
 
   // check if longURL contains https
-  if (!longURL.includes('https:\//', 0)) {
+  if (!longURL.includes('http:\//', 0)) {
     longURL = 'https:\//' + longURL;
   }
 
