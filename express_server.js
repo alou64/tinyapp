@@ -15,6 +15,7 @@ app.use(cookieSession({
 }));
 
 
+const index = require('./routes/index');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
 const register = require('./routes/register');
@@ -22,6 +23,7 @@ const u = require('./routes/u');
 const urls = require('./routes/urls');
 
 
+app.use('/', index);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/register', register);
