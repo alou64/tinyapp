@@ -13,6 +13,8 @@
         <div class="alert alert-danger" role="alert" style="margin: 0">
           <% if (alert === 'notOwner') { %>
             You can only edit URLs you own
+          <% } else if (alert === 'nonExistentURL') { %>
+            URL does not exist
           <% } else { %>
             Please enter a URL
           <% } %>
