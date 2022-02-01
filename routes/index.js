@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 
+// handle redirect on index page
 router.get('/', (req, res) => {
   // check if user logged in
   // redirect to login page if not logged in
