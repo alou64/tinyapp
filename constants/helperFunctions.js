@@ -22,7 +22,7 @@ const getUserByEmail = (email, database) => {
 
 // returns URLS belonging to a given user
 const urlsForUser = (id, database) => {
-  let urls = {};
+  const urls = {};
   for (let url in database) {
     if (database[url].userID === id) {
       urls[url] = database[url].longURL;
