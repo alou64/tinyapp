@@ -64,17 +64,35 @@ router.get('/new', (req, res) => {
 
 
 // render urls_show page
-router.get('/:shortURL/', (req, res) => {
-  const user = users[req.session.user_id];
-  const shortURL = req.params.shortURL;
+router.get('/:id', (req, res) => {
+  const user = req.session.user_id;
+
+  // check if user logged in
+  // redirect to login page if not logged in
+  if (!req.session.user_id) {
+    return res.redirect('/login/?alert=notLoggedIn');
+  }
+
+  const shortURL = req.params.id;
 
   if (Object.keys(req.query).length === 0) {
-    const templateVars = { shortURL, user, longURL: urlDatabase[shortURL].longURL, alert: false };
+    // ensure that url exists
+    if (!Object.keys(urlDatabase).includes(shortURL)) {
+      return res.redirect(`/urls/${shortURL}/?shortURL=${shortURL}&alert=nonExistentURL`);
+    }
+
+    // ensure that user owns the url to be edited
+    if (!Object.keys(urlsForUser(user, urlDatabase)).includes(shortURL)) {
+      return res.redirect(`/urls/${shortURL}/?shortURL=${shortURL}&alert=notOwner`);
+    }
+
+    const templateVars = { shortURL, user: users[user], longURL: urlDatabase[shortURL].longURL, alert: false };
     return res.render('urls_show', templateVars);
   }
 
   // handle redirect
-  const templateVars = { shortURL, user, longURL: urlDatabase[shortURL].longURL, alert: req.query.alert };
+  const longURL = req.query.alert === 'nonExistentURL' ? null : urlDatabase[shortURL].longURL
+  const templateVars = { shortURL, longURL, user: users[user], alert: req.query.alert };
   res.status(403).render('urls_show', templateVars);
 });
 
