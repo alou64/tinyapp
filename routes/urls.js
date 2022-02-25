@@ -1,4 +1,4 @@
-const router = require('express').Router();
+git aconst router = require('express').Router();
 const { urlDatabase, users } = require('../constants/database');
 const { generateRandomString, urlsForUser } = require('../constants/helperFunctions');
 
@@ -50,6 +50,10 @@ router.post('/', (req, res) => {
 
 // render urls_new page
 router.get('/new', (req, res) => {
+  if (!req.session.user_id) {
+    return res.redirect('/login/?alert=notLoggedIn');
+  }
+
   const user = users[req.session.user_id];
 
   if (Object.keys(req.query).length === 0) {
